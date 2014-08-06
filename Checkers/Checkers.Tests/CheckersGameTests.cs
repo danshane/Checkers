@@ -54,7 +54,7 @@ namespace Checkers.Tests
                 var piecesInPosition = from p in player1Pieces
                                        where p.Position.Equals(position)
                                        select p;
-                
+
                 Assert.NotNull(piecesInPosition);
                 Assert.AreEqual(1, piecesInPosition.Count());
             }
@@ -73,25 +73,161 @@ namespace Checkers.Tests
         [Test]
         public void Player1CanMakeInitialMove()
         {
-            throw new NotImplementedException();
+            var game = new CheckersGame();
+
+            var piecePosition = new PiecePosition(2, 0);
+            var destinationPosition = new PiecePosition(3, 1);
+
+            var pieceToMove = (from p in game.Pieces
+                               where p.Player == Player.Player1
+                               && p.Position.Equals(piecePosition)
+                               select p).FirstOrDefault();
+
+            Assert.NotNull(pieceToMove);
+
+            var moveResult = game.MovePiece(Player.Player1, pieceToMove, destinationPosition);
+
+            Assert.AreEqual(MoveResult.Player2ToMoveNext, moveResult);
         }
 
         [Test]
         public void Player2CannotMakeInitialMove()
         {
-            throw new NotImplementedException();
+            var game = new CheckersGame();
+
+            var piecePosition = new PiecePosition(5, 1);
+            var destinationPosition = new PiecePosition(4, 0);
+
+            var pieceToMove = (from p in game.Pieces
+                               where p.Player == Player.Player2
+                               && p.Position.Equals(piecePosition)
+                               select p).FirstOrDefault();
+
+            Assert.NotNull(pieceToMove);
+
+            Assert.Throws<CheckersMoveException>(() => game.MovePiece(Player.Player2, pieceToMove, destinationPosition));
+        }
+
+        [Test]
+        public void CannotMoveWithoutSpecifyingAPlayer()
+        {
+            var game = new CheckersGame();
+
+            var piecePosition = new PiecePosition(2, 0);
+            var destinationPosition = new PiecePosition(3, 1);
+
+            var pieceToMove = (from p in game.Pieces
+                               where p.Player == Player.Player1
+                               && p.Position.Equals(piecePosition)
+                               select p).FirstOrDefault();
+
+            Assert.NotNull(pieceToMove);
+
+            Assert.Throws<ArgumentException>(() => game.MovePiece(Player.Unknown, pieceToMove, destinationPosition));
+        }
+
+        [Test]
+        public void CannotMoveWithoutSpecifyingAPiece()
+        {
+            var game = new CheckersGame();
+
+            var destinationPosition = new PiecePosition(3, 1);
+
+            Assert.Throws<ArgumentNullException>(() => game.MovePiece(Player.Player1, null, destinationPosition));
+        }
+
+        [Test]
+        public void CannotMoveWithoutSpecifyingANewPosition()
+        {
+            var game = new CheckersGame();
+
+            var piecePosition = new PiecePosition(2, 0);
+
+            var pieceToMove = (from p in game.Pieces
+                               where p.Player == Player.Player1
+                               && p.Position.Equals(piecePosition)
+                               select p).FirstOrDefault();
+
+            Assert.NotNull(pieceToMove);
+
+            Assert.Throws<ArgumentNullException>(() => game.MovePiece(Player.Player1, pieceToMove, null));
+
+        }
+
+        [Test]
+        public void CannotMoveAPieceNotInPlay()
+        {
+            var game = new CheckersGame();
+
+            var destinationPosition = new PiecePosition(3, 1);
+
+            var pieceToMove = new CheckersPiece(Player.Player1, new PiecePosition(4, 4));
+
+            Assert.Throws<CheckersMoveException>(() => game.MovePiece(Player.Player1, pieceToMove, destinationPosition));
+
         }
 
         [Test]
         public void CanMakeValidBasicMove()
         {
-            throw new NotImplementedException();
+            var game = new CheckersGame();
+
+            var gamePieces = new CheckersPiece[]
+            {
+                new CheckersPiece(Player.Player1, new PiecePosition(0, 0)),
+                new CheckersPiece(Player.Player2, new PiecePosition(7, 7)),
+            };
+
+            game.Pieces = gamePieces;
+
+            var destPosition1 = new PiecePosition(1, 1);
+            var destPosition2 = new PiecePosition(6, 6);
+
+            var moveResult = game.MovePiece(Player.Player1, gamePieces[0], destPosition1);
+            Assert.AreEqual(destPosition1, gamePieces[0].Position);
+            Assert.AreEqual(MoveResult.Player2ToMoveNext, moveResult);
+
+            moveResult = game.MovePiece(Player.Player2, gamePieces[1], new PiecePosition(6, 6));
+            Assert.AreEqual(destPosition2, gamePieces[1].Position);
+            Assert.AreEqual(MoveResult.Player1ToMoveNext, moveResult);
         }
 
         [Test]
         public void CannotMakeInvalidBasicMove()
         {
-            throw new NotImplementedException();
+            var game = new CheckersGame();
+
+            var originalPosition1 = new PiecePosition(0, 0);
+            var originalPosition2 = new PiecePosition(7, 7);
+            var gamePieces = new CheckersPiece[]
+            {
+                new CheckersPiece(Player.Player1, originalPosition1),
+                new CheckersPiece(Player.Player2,originalPosition2),
+            };
+
+            game.Pieces = gamePieces;
+
+            var destPosition1 = new PiecePosition(0, 1);
+            var destPosition2 = new PiecePosition(7, 6);
+
+            Assert.Throws<CheckersMoveException>(() => game.MovePiece(Player.Player1, gamePieces[0], destPosition1));
+            Assert.AreEqual(originalPosition1, gamePieces[0].Position);
+        }
+
+        [Test]
+        public void CannotMoveOntoExistingPiece()
+        {
+            var game = new CheckersGame();
+
+            var gamePieces = new CheckersPiece[]
+            {
+                new CheckersPiece(Player.Player1, new PiecePosition(0, 0)),
+                new CheckersPiece(Player.Player2, new PiecePosition(1, 1)),
+            };
+
+            game.Pieces = gamePieces;
+            
+            Assert.Throws<CheckersMoveException>(() => game.MovePiece(Player.Player1, gamePieces[0], new PiecePosition(1, 1)));
         }
 
         [Test]

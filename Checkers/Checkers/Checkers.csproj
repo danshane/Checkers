@@ -40,8 +40,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CheckersGame.cs" />
+    <Compile Include="CheckersMoveException.cs" />
     <Compile Include="CheckersPiece.cs" />
+    <Compile Include="Movement\BasicPieceMovement.cs" />
     <Compile Include="MoveResult.cs" />
+    <Compile Include="Movement\IPieceMovement.cs" />
     <Compile Include="PiecePosition.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

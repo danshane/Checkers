@@ -34,6 +34,9 @@ namespace Checkers
         /// <param name="y">The 0-based Y position of the piece.</param>
         public PiecePosition(int x, int y)
         {
+            if ((x < 0) || (x > 7) || (y < 0) || (y > 7))
+                throw new ArgumentException("An invalid piece position has been specified.");
+
             _x = x;
             _y = y;
         }

@@ -11,5 +11,11 @@ namespace Checkers
     /// </summary>
     public enum MoveResult
     {
+        Unknown,
+        Player1ToMoveNext,
+        Player2ToMoveNext,
+        Player1Wins,
+        Player2Wins,
+        Stalemate,
     }
 }
