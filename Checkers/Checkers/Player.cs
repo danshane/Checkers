@@ -9,7 +9,10 @@ namespace Checkers
     /// <summary>
     /// An enumeration of available players for a game of Checkers.
     /// </summary>
-    public class Player
+    public enum Player
     {
+        Unknown,
+        Player1,
+        Player2
     }
 }

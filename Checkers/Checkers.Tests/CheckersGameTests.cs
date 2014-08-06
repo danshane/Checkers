@@ -13,7 +13,61 @@ namespace Checkers.Tests
         [Test]
         public void CanCreateNewGame()
         {
-            throw new NotImplementedException();
+            var game = new CheckersGame();
+            Assert.NotNull(game.Pieces);
+        }
+
+        [Test]
+        public void NewGameHasCorrectStartingPosition()
+        {
+            var game = new CheckersGame();
+
+            Assert.AreEqual(24, game.Pieces.Count());
+
+            var player1Pieces = from p in game.Pieces
+                                where p.Player == Player.Player1
+                                select p;
+
+            var player2Pieces = from p in game.Pieces
+                                where p.Player == Player.Player2
+                                select p;
+
+            Assert.AreEqual(12, player1Pieces.Count());
+            Assert.AreEqual(12, player2Pieces.Count());
+
+            var player1StartingPositions = new PiecePosition[]
+            {
+                new PiecePosition(0, 0), new PiecePosition(0, 2), new PiecePosition(0, 4), new PiecePosition(0, 6),
+                new PiecePosition(1, 1), new PiecePosition(1, 3), new PiecePosition(1, 5), new PiecePosition(1, 7),
+                new PiecePosition(2, 0), new PiecePosition(2, 2), new PiecePosition(2, 4), new PiecePosition(2, 6)
+            };
+
+            var player2StartingPositions = new PiecePosition[]
+            {
+                new PiecePosition(5, 1), new PiecePosition(5, 3), new PiecePosition(5, 5), new PiecePosition(5, 7),
+                new PiecePosition(6, 0), new PiecePosition(6, 2), new PiecePosition(6, 4), new PiecePosition(6, 6),
+                new PiecePosition(7, 1), new PiecePosition(7, 3), new PiecePosition(7, 5), new PiecePosition(7, 7)
+            };
+
+            foreach (var position in player1StartingPositions)
+            {
+                var piecesInPosition = from p in player1Pieces
+                                       where p.Position.Equals(position)
+                                       select p;
+                
+                Assert.NotNull(piecesInPosition);
+                Assert.AreEqual(1, piecesInPosition.Count());
+            }
+
+            foreach (var position in player2StartingPositions)
+            {
+                var piecesInPosition = from p in player2Pieces
+                                       where p.Position.Equals(position)
+                                       select p;
+
+                Assert.NotNull(piecesInPosition);
+                Assert.AreEqual(1, piecesInPosition.Count());
+            }
         }
 
         [Test]
@@ -39,7 +93,7 @@ namespace Checkers.Tests
         {
             throw new NotImplementedException();
         }
-        
+
         [Test]
         public void CanMakeValidJumpMove()
         {
